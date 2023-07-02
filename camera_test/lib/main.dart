@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart'; // Flutter material design library
-import 'home.dart';
+import 'home.dart'; // import my class containing the home page design -> Home()
 
 Future<void> main() async {
   runApp(MyApp());

@@ -11,12 +11,13 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   List<CameraDescription>? cameras; // List to store available cameras
-  CameraDescription? selectedCamera;
+  CameraDescription? selectedCamera; // the currently selectedCamera
   CameraController? controller; // Camera controller to interact with the camera
   XFile? image; // Variable to store the captured image
 
   Map<String, String> cameraNameMapping = {};
 
+  // initState is called when the class is initiated
   @override
   void initState() {
     loadCamera();
@@ -28,16 +29,14 @@ class _HomeState extends State<Home> {
 
     cameraNameMapping = {
       for (int i = 0; i < cameras!.length; i++)
-        cameras![i].name:
-            "Camera ${i + 1} (${cameras![i].lensDirection == CameraLensDirection.back ? "back" : "front"})"
+        cameras![i].name: "Camera ${i + 1} (${cameras![i].lensDirection == CameraLensDirection.back ? "back" : "front"})"
     }; // define the camera name mapping as we load cameras
 
     if (cameras != null) {
       selectedCamera = cameras![0]; // Select the first available camera
-      controller = CameraController(selectedCamera!, ResolutionPreset.max,
-          imageFormatGroup: ImageFormatGroup.bgra8888);
+      controller = CameraController(selectedCamera!, ResolutionPreset.max, imageFormatGroup: ImageFormatGroup.bgra8888);
       // Initialize the controller with the first camera in the list
-      print(cameras);
+      // print(cameras);
       controller!.initialize().then((_) {
         if (!mounted) {
           return;
@@ -82,29 +81,24 @@ class _HomeState extends State<Home> {
         floatingActionButton: Container(
           alignment: Alignment.bottomRight,
           width: 280,
-          child:
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             DropdownButton<CameraDescription>(
+              // This is the DropdownButton for selecting Cameras
               value: selectedCamera,
               onChanged: (CameraDescription? newValue) {
                 setState(() {
                   selectedCamera = newValue;
-                  controller = CameraController(
-                      selectedCamera!, ResolutionPreset.max,
-                      imageFormatGroup: ImageFormatGroup.bgra8888);
+                  controller = CameraController(selectedCamera!, ResolutionPreset.max, imageFormatGroup: ImageFormatGroup.bgra8888);
                   controller!.initialize().then((_) {
                     if (!mounted) {
                       return;
                     }
-                    setState(
-                        () {}); // Update the UI after initializing the controller
+                    setState(() {}); // Update the UI after initializing the controller
                   });
                 });
               },
-              items: cameras?.map<DropdownMenuItem<CameraDescription>>(
-                  (CameraDescription camera) {
-                String cameraText =
-                    cameraNameMapping[camera.name] ?? "Unknown Camera";
+              items: cameras?.map<DropdownMenuItem<CameraDescription>>((CameraDescription camera) {
+                String cameraText = cameraNameMapping[camera.name] ?? "Unknown Camera";
 
                 return DropdownMenuItem<CameraDescription>(
                   value: camera,
@@ -113,6 +107,7 @@ class _HomeState extends State<Home> {
               }).toList(),
             ),
             FloatingActionButton(
+                // save image button
                 onPressed: () async {
                   if (image != null) {
                     await GallerySaver.saveImage(image!.path);
@@ -121,13 +116,13 @@ class _HomeState extends State<Home> {
                 backgroundColor: Colors.deepOrangeAccent,
                 child: Icon(Icons.save)),
             FloatingActionButton(
+              // take image button
               onPressed: () async {
                 try {
                   if (controller != null) {
                     if (controller!.value.isInitialized) {
                       image = await controller!.takePicture(); // Capture image
-                      setState(
-                          () {}); // Update the UI after capturing the image
+                      setState(() {}); // Update the UI after capturing the image
                     }
                   }
                 } catch (e) {
