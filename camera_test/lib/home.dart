@@ -81,7 +81,7 @@ class _HomeState extends State<Home> {
         ),
         floatingActionButton: Container(
           alignment: Alignment.bottomRight,
-          width: 250,
+          width: 280,
           child:
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             DropdownButton<CameraDescription>(
@@ -89,8 +89,9 @@ class _HomeState extends State<Home> {
               onChanged: (CameraDescription? newValue) {
                 setState(() {
                   selectedCamera = newValue;
-                  controller =
-                      CameraController(selectedCamera!, ResolutionPreset.max);
+                  controller = CameraController(
+                      selectedCamera!, ResolutionPreset.max,
+                      imageFormatGroup: ImageFormatGroup.bgra8888);
                   controller!.initialize().then((_) {
                     if (!mounted) {
                       return;
