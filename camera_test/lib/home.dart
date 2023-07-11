@@ -1,6 +1,7 @@
 import 'dart:io'; // we need the File class for showing the image
 import 'package:camera/camera.dart'; // Camera package
 import 'package:gallery_saver/gallery_saver.dart'; // used to save image to photo Library
+import 'google_ml_kit/text_detector_view.dart';
 
 import 'package:flutter/material.dart'; // Flutter material design library
 
@@ -66,7 +67,8 @@ class _HomeState extends State<Home> {
                         ? Center(
                             child: CircularProgressIndicator(),
                           )
-                        : CameraPreview(controller!),
+                        // : CameraPreview(controller!),
+                        :TextRecognizerView(),
               ),
               Container(
                 child: image == null
@@ -75,6 +77,7 @@ class _HomeState extends State<Home> {
                         File(image!.path),
                       ),
               ),
+              // CustomCard('live_text_recognizer', TextRecognizerView()),
             ],
           ),
         ),
@@ -136,3 +139,36 @@ class _HomeState extends State<Home> {
         ));
   }
 }
+class CustomCard extends StatelessWidget {
+  final String _label;
+  final Widget _viewPage;
+  final bool featureCompleted;
+
+  const CustomCard(this._label, this._viewPage, {this.featureCompleted = true});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 5,
+      margin: EdgeInsets.only(bottom: 10),
+      child: ListTile(
+        tileColor: Theme.of(context).primaryColor,
+        title: Text(
+          _label,
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        onTap: () {
+          if (!featureCompleted) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content:
+                    const Text('This feature has not been implemented yet')));
+          } else {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => _viewPage));
+          }
+        },
+      ),
+    );
+  }
+}
+
