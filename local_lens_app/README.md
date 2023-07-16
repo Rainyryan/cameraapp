@@ -4,6 +4,8 @@ this is the project root
 
 ## Good to knows
 * Project codes are mainly in './lib' directory
+* './lib/api' contains our custom api files
+* 
 ### Pub and pubspec.yaml
 * pub is the package manager for the Dart programming language, just like pip for python, containing reusable libraries & packages for Flutter, AngularDart, and general Dart programs.
 * 'pubspec.yaml' (pub specification) file specifies dependencies that the project requires, such as particular packages (and their versions), fonts, or image files. It also specifies other requirements, such as dependencies on developer packages (like testing or mocking packages), or particular constraints on the version of the Flutter SDK. pub reads this file and configure the project accordingly.

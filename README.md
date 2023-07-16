@@ -1,6 +1,6 @@
 # LocaLens git repository root
 
-This is NOT the flutter project root! Go to 'local_lens_app'
+This is NOT the flutter project root! Go to './local_lens_app'
 
 ## Files Structure
 ```
