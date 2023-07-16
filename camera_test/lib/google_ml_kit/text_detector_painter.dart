@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 
 import 'coordinates_translator.dart';
+import 'translation_api.dart';
 
 class TextRecognizerPainter extends CustomPainter {
   TextRecognizerPainter(
@@ -22,23 +23,56 @@ class TextRecognizerPainter extends CustomPainter {
   final CameraLensDirection cameraLensDirection;
 
   @override
-  void paint(Canvas canvas, Size size) {
+  Future<void> paint(Canvas canvas, Size size) async {
     final Paint paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3.0
-      ..color = Colors.lightGreenAccent;
+      ..color = const Color.fromARGB(255, 255, 100, 89);
 
-    final Paint background = Paint()..color = Color(0x99000000);
+    final Paint background = Paint()..color = Color.fromARGB(175, 0, 0, 0);
 
     for (final textBlock in recognizedText.blocks) {
+      double leftCoordinate = translateX(
+        textBlock.boundingBox.left,
+        size,
+        imageSize,
+        rotation,
+        cameraLensDirection,
+      );
+      double topCoordinate = translateY(
+        textBlock.boundingBox.top,
+        size,
+        imageSize,
+        rotation,
+        cameraLensDirection,
+      );
+      double rightCoordinate = translateX(
+        textBlock.boundingBox.right,
+        size,
+        imageSize,
+        rotation,
+        cameraLensDirection,
+      );
+      double bottomCoordinate = translateY(
+        textBlock.boundingBox.bottom,
+        size,
+        imageSize,
+        rotation,
+        cameraLensDirection,
+      );
+
+      double boxWidth = rightCoordinate - leftCoordinate;
+      double boxHeight = bottomCoordinate - topCoordinate;
+
       final ParagraphBuilder builder = ParagraphBuilder(
         ParagraphStyle(
             textAlign: TextAlign.left,
-            fontSize: 16,
+            fontSize: calculateFontSize(boxWidth, boxHeight),
             textDirection: TextDirection.ltr),
       );
       builder.pushStyle(
-          ui.TextStyle(color: Colors.lightGreenAccent, background: background));
+          ui.TextStyle(color: Color.fromARGB(255, 255, 255, 255), background: background));
+
       builder.addText(textBlock.text);
       builder.pop();
 
@@ -70,7 +104,7 @@ class TextRecognizerPainter extends CustomPainter {
       //   rotation,
       //   cameraLensDirection,
       // );
-      //
+
       // canvas.drawRect(
       //   Rect.fromLTRB(left, top, right, bottom),
       //   paint,
@@ -169,13 +203,17 @@ class TextRecognizerPainter extends CustomPainter {
             width: (right - left).abs(),
           )),
         Offset(
-            Platform.isAndroid &&
-                    cameraLensDirection == CameraLensDirection.front
-                ? right
-                : left,
+            Platform.isAndroid && cameraLensDirection == CameraLensDirection.front ? right : left,
             top),
       );
     }
+  }
+
+  double calculateFontSize(double boxWidth, double boxHeight) {
+    final double ratioWidth = boxWidth / 400; // Adjust the divisor as needed
+    final double newFontSize = 16 * ratioWidth; // Base font size is 16, adjust as needed
+
+    return newFontSize;
   }
 
   @override

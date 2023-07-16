@@ -30,12 +30,14 @@ class _HomeState extends State<Home> {
 
     cameraNameMapping = {
       for (int i = 0; i < cameras!.length; i++)
-        cameras![i].name: "Camera ${i + 1} (${cameras![i].lensDirection == CameraLensDirection.back ? "back" : "front"})"
+        cameras![i].name:
+            "Camera ${i + 1} (${cameras![i].lensDirection == CameraLensDirection.back ? "back" : "front"})"
     }; // define the camera name mapping as we load cameras
 
     if (cameras != null) {
       selectedCamera = cameras![0]; // Select the first available camera
-      controller = CameraController(selectedCamera!, ResolutionPreset.max, imageFormatGroup: ImageFormatGroup.bgra8888);
+      controller = CameraController(selectedCamera!, ResolutionPreset.max,
+          imageFormatGroup: ImageFormatGroup.bgra8888);
       // Initialize the controller with the first camera in the list
       // print(cameras);
       controller!.initialize().then((_) {
@@ -67,8 +69,8 @@ class _HomeState extends State<Home> {
                         ? Center(
                             child: CircularProgressIndicator(),
                           )
-                        // : CameraPreview(controller!),
-                        :TextRecognizerView(),
+                        : CameraPreview(controller!),
+                // :TextRecognizerView(),
               ),
               Container(
                 child: image == null
@@ -77,7 +79,7 @@ class _HomeState extends State<Home> {
                         File(image!.path),
                       ),
               ),
-              // CustomCard('live_text_recognizer', TextRecognizerView()),
+              CustomCard('live_text_recognizer', TextRecognizerView()),
             ],
           ),
         ),
@@ -91,7 +93,8 @@ class _HomeState extends State<Home> {
               onChanged: (CameraDescription? newValue) {
                 setState(() {
                   selectedCamera = newValue;
-                  controller = CameraController(selectedCamera!, ResolutionPreset.max, imageFormatGroup: ImageFormatGroup.bgra8888);
+                  controller = CameraController(selectedCamera!, ResolutionPreset.max,
+                      imageFormatGroup: ImageFormatGroup.bgra8888);
                   controller!.initialize().then((_) {
                     if (!mounted) {
                       return;
@@ -139,6 +142,7 @@ class _HomeState extends State<Home> {
         ));
   }
 }
+
 class CustomCard extends StatelessWidget {
   final String _label;
   final Widget _viewPage;
@@ -159,16 +163,13 @@ class CustomCard extends StatelessWidget {
         ),
         onTap: () {
           if (!featureCompleted) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content:
-                    const Text('This feature has not been implemented yet')));
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: const Text('This feature has not been implemented yet')));
           } else {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => _viewPage));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => _viewPage));
           }
         },
       ),
     );
   }
 }
-
