@@ -17,7 +17,6 @@ class TranslationApi {
       return translatedText;
     } catch (e) {
       return null;
-      return e.toString();
     }
   }
 
