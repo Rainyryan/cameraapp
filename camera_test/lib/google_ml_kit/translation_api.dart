@@ -5,7 +5,7 @@ import 'package:google_mlkit_translation/google_mlkit_translation.dart';
 class TranslationApi {
   static Future<String?> translateText(String recognizedText) async {
     try {
-      final langIdentifier = LanguageIdentifier(confidenceThreshold: 0.3);
+      final langIdentifier = LanguageIdentifier(confidenceThreshold: 0.5);
       final languageCode = await langIdentifier.identifyLanguage(recognizedText);
       langIdentifier.close();
       final translator = OnDeviceTranslator(

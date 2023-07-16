@@ -27,7 +27,7 @@ class TextRecognizerPainter extends CustomPainter {
     final Paint paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3.0
-      ..color = const Color.fromARGB(255, 255, 100, 89);
+      ..color = const Color(0xFFFFE4C7);
 
     final Paint background = Paint()..color = Color.fromARGB(175, 0, 0, 0);
 
