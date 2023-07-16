@@ -77,23 +77,22 @@ class _CameraViewState extends State<CameraView> {
     if (_controller == null) return Container();
     if (_controller?.value.isInitialized == false) return Container();
     return Container(
-      color: Colors.black,
+      color: Colors.green,
       child: Stack(
         fit: StackFit.expand,
         children: <Widget>[
-          Center(
-            child: _changingCameraLens
-                ? Center(
-                    child: const Text('Changing camera lens'),
-                  )
-                : CameraPreview(
-                    _controller!,
-                    child: widget.customPaint,
-                  ),
+          AspectRatio(
+            aspectRatio: _controller!.value.aspectRatio,
+            child: Container(
+              child: CameraPreview(
+                _controller!,
+                child: widget.customPaint,
+              ),
+            ),
           ),
           // _backButton(),
           _switchLiveCameraToggle(),
-          _detectionViewModeToggle(),
+          // _detectionViewModeToggle(),
           // _zoomControl(),
           _exposureControl(),
         ],
@@ -138,8 +137,8 @@ class _CameraViewState extends State<CameraView> {
       );
 
   Widget _switchLiveCameraToggle() => Positioned(
-        bottom: 8,
-        right: 8,
+        bottom: 18,
+        right: 18,
         child: SizedBox(
           height: 50.0,
           width: 50.0,
@@ -205,29 +204,29 @@ class _CameraViewState extends State<CameraView> {
       );
 
   Widget _exposureControl() => Positioned(
-        top: 40,
+        top: 75,
         right: 8,
         child: ConstrainedBox(
           constraints: BoxConstraints(
             maxHeight: 250,
           ),
           child: Column(children: [
-            Container(
-              width: 55,
-              decoration: BoxDecoration(
-                color: Colors.black54,
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Center(
-                  child: Text(
-                    '${_currentExposureOffset.toStringAsFixed(1)}x',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ),
-            ),
+            // Container(
+            //   width: 55,
+            //   decoration: BoxDecoration(
+            //     color: Colors.black54,
+            //     borderRadius: BorderRadius.circular(10.0),
+            //   ),
+            //   child: Padding(
+            //     padding: const EdgeInsets.all(8.0),
+            //     child: Center(
+            //       child: Text(
+            //         '${_currentExposureOffset.toStringAsFixed(1)}x',
+            //         style: TextStyle(color: Colors.white),
+            //       ),
+            //     ),
+            //   ),
+            // ),
             Expanded(
               child: RotatedBox(
                 quarterTurns: 3,

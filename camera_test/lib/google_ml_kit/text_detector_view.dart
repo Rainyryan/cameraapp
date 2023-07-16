@@ -51,9 +51,12 @@ class _TextRecognizerViewState extends State<TextRecognizerView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0xFFFFE4C7), // Creamy Orange color
-        title: Text('Local Lens v1'),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(20.0),
+        child: AppBar(
+          elevation: 0,
+          backgroundColor: Color(0xFFFFE4C7), // Creamy Orange color
+        ),
       ),
       body: Stack(
         children: [
@@ -87,15 +90,13 @@ class _TextRecognizerViewState extends State<TextRecognizerView> {
               ],
             ),
           ),
-          Positioned(
-            bottom: 35,
-            left: 16,
-            right: 16,
+          Padding(
+            padding: const EdgeInsets.all(20.0),
             child: Align(
               alignment: Alignment.bottomCenter,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  primary: Color(0xFFFFE4C7), // Creamy Orange color
+                  backgroundColor: Color(0xFFFFE4C7), // Creamy Orange color
                 ),
                 onPressed: _captureImage,
                 child: Text('Capture Image'),
@@ -111,10 +112,10 @@ class _TextRecognizerViewState extends State<TextRecognizerView> {
         value: _script,
         icon: const Icon(Icons.arrow_downward),
         elevation: 16,
-        style: const TextStyle(color: Colors.black),
+        style: const TextStyle(color: Colors.white),
         underline: Container(
           height: 2,
-          color: Colors.black,
+          color: Colors.white,
         ),
         onChanged: (TextRecognitionScript? script) {
           if (script != null) {
@@ -125,6 +126,7 @@ class _TextRecognizerViewState extends State<TextRecognizerView> {
             });
           }
         },
+        dropdownColor: Color.fromARGB(178, 255, 228, 199),
         items: TextRecognitionScript.values.map<DropdownMenuItem<TextRecognitionScript>>((script) {
           return DropdownMenuItem<TextRecognitionScript>(
             value: script,
