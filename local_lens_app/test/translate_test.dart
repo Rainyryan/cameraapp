@@ -1,12 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:camera_test/api/translation_api.dart';
+import 'package:local_lens_app/api/translation_api.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   test('Translation test', () async {
     // Set up the input and expected output
-    final String inputText = 'sadfjslfj;as';
-    final String expectedOutput =
+    const String inputText = 'sadfjslfj;as';
+    const String expectedOutput =
         'Hello'; // Assuming the translation of 'Hello' to French is 'Bonjour'
 
     // Call the translation method
