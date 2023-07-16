@@ -1,4 +1,1 @@
-# cameraapp
-This is a simple camera app for testing!
-
--Ryan
+# Local Lens menu translator
