@@ -6,7 +6,7 @@ import 'package:gallery_saver/gallery_saver.dart';
 
 import 'detector_view.dart';
 import 'text_detector_painter.dart';
-import 'translation_api.dart';
+import '../api/translation_api.dart';
 
 class TextRecognizerView extends StatefulWidget {
   @override

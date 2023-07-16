@@ -1,4 +1,7 @@
 # LocaLens App
+
+This is NOT the flutter project root!
+
 ## Requirements
 
 ### iOS
@@ -26,17 +29,17 @@ post_install do |installer|
     config.build_settings["EXCLUDED_ARCHS[sdk=*]"] = "armv7"
     config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = $iOSVersion
   end
-  
+
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
-    
+
     # add these lines:
     target.build_configurations.each do |config|
       if Gem::Version.new($iOSVersion) > Gem::Version.new(config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'])
         config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = $iOSVersion
       end
     end
-    
+
   end
 end
 ```
@@ -48,5 +51,3 @@ Notice that the minimum `IPHONEOS_DEPLOYMENT_TARGET` is 10.0, you can set it to 
 - minSdkVersion: 21
 - targetSdkVersion: 33
 - compileSdkVersion: 33
-
-

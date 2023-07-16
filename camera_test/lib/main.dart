@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart'; // Flutter material design library
-import 'home.dart'; // import my class containing the home page design -> Home()
-import 'google_ml_kit/text_detector_view.dart';
+import 'google_ml_kit_text_detection/text_detector_view.dart';
 
 Future<void> main() async {
   runApp(MyApp());

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:camera_test/google_ml_kit/translation_api.dart';
+import 'package:camera_test/api/translation_api.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
