@@ -139,7 +139,7 @@ class _TextRecognizerViewState extends State<TextRecognizerView> {
 
   Future<void> _processImage(InputImage inputImage) async {
     if (!_canProcess) return;
-    if (_isBusy) return;
+await Future.delayed(const Duration(seconds: 2));    if (_isBusy) return;
     _isBusy = true;
     setState(() {
       _text = '';
