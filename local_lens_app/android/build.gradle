@@ -29,7 +29,8 @@ subprojects {
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
-
-defaultConfig {
-    minSdkVersion 21
-}
+// android{
+//     defaultConfig {
+//         minSdkVersion 21
+//     }
+// }
