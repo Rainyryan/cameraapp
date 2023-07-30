@@ -6,6 +6,7 @@ import 'package:gallery_saver/gallery_saver.dart';
 import 'detector_view.dart';
 import 'text_detector_painter.dart';
 import '../api/translation_api.dart';
+import '../api/text_to_speech.dart';
 
 class TextRecognizerView extends StatefulWidget {
   @override
@@ -97,7 +98,7 @@ class _TextRecognizerViewState extends State<TextRecognizerView> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFFFFE4C7), // Creamy Orange color
                 ),
-                onPressed: _captureImage,
+                onPressed: () => TextToSpeechApi.speak('hello world'), //_captureImage,
                 child: Text('Capture Image'),
               ),
             ),
@@ -139,7 +140,8 @@ class _TextRecognizerViewState extends State<TextRecognizerView> {
 
   Future<void> _processImage(InputImage inputImage) async {
     if (!_canProcess) return;
-await Future.delayed(const Duration(seconds: 2));    if (_isBusy) return;
+    await Future.delayed(const Duration(seconds: 2));
+    if (_isBusy) return;
     _isBusy = true;
     setState(() {
       _text = '';

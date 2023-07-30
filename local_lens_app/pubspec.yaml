@@ -43,6 +43,7 @@ dependencies:
   image_picker: ^1.0.0
   google_mlkit_translation: ^0.8.0
   google_mlkit_language_id: ^0.8.0
+  flutter_tts: ^3.7.0
 
 dev_dependencies:
   flutter_test:
