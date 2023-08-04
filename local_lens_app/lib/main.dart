@@ -11,8 +11,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      // home: TextRecognizerView(), // Set Home widget as the home of the app
-      home: MyHomePage(),
+      home: TextRecognizerView(), // Set Home widget as the home of the app
+      // home: MyHomePage(),
     );
   }
 }

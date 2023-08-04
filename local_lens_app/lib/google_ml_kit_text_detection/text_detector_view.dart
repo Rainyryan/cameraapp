@@ -98,8 +98,8 @@ class _TextRecognizerViewState extends State<TextRecognizerView> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFFFFE4C7), // Creamy Orange color
                 ),
-                onPressed: _captureImage,
-                child: Text('Capture Image'),
+                onPressed: () => TextToSpeechApi.speak("hello ryan"), //_captureImage,
+                child: Text('test tts'),
               ),
             ),
           ),

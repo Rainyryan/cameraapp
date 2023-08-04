@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:local_lens_app/api/translation_api.dart';
+import 'package:local_lens_app/api/__translation_api.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
