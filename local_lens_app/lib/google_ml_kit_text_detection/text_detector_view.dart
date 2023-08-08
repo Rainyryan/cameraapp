@@ -8,6 +8,8 @@ import 'text_detector_painter.dart';
 import '../api/translation_api.dart';
 import '../api/text_to_speech.dart';
 
+import 'dart:async';
+
 class TextRecognizerView extends StatefulWidget {
   @override
   State<TextRecognizerView> createState() => _TextRecognizerViewState();
@@ -23,6 +25,10 @@ class _TextRecognizerViewState extends State<TextRecognizerView> {
   var _cameraLensDirection = CameraLensDirection.back;
   late CameraController _cameraController;
 
+  bool _isProcessing = false; // Track if text recognition process is ongoing
+  Timer? _imageUpdateTimer; // Timer for updating the image
+  Timer? _textRecognitionTimer; // Timer for running text recognition
+
   bool taking_picture = false;
   @override
   void initState() {
@@ -35,6 +41,9 @@ class _TextRecognizerViewState extends State<TextRecognizerView> {
     _canProcess = false;
     _textRecognizer.close();
     _cameraController.dispose();
+
+    _imageUpdateTimer?.cancel();
+    _textRecognitionTimer?.cancel();
     super.dispose();
   }
 
@@ -139,35 +148,78 @@ class _TextRecognizerViewState extends State<TextRecognizerView> {
         }).toList(),
       );
 
+  // Future<void> _processImage(InputImage inputImage) async {
+  //   if (!_canProcess) return;
+  //   await Future.delayed(const Duration(seconds: 2));
+  //   if (_isBusy) return;
+  //   _isBusy = true;
+  //   setState(() {
+  //     _text = '';
+  //   });
+  //   final recognizedText = await _textRecognizer.processImage(inputImage);
+  //   final translatedText = await TranslationApi.translateRecognizedText(recognizedText);
+  //   final resultText = translatedText ?? recognizedText;
+  //   if (inputImage.metadata?.size != null && inputImage.metadata?.rotation != null) {
+  //     final painter = TextRecognizerPainter(
+  //       resultText,
+  //       inputImage.metadata!.size,
+  //       inputImage.metadata!.rotation,
+  //       _cameraLensDirection,
+  //     );
+
+  //     if (taking_picture) painter.captureAndSaveCanvas(inputImage.metadata!.size);
+  //     _customPaint = CustomPaint(painter: painter);
+  //   } else {
+  //     _text = 'Recognized text:\n\n${resultText.text}';
+  //     _customPaint = null;
+  //   }
+  //   _isBusy = false;
+  //   if (mounted) {
+  //     setState(() {});
+  //   }
+  // }
+
   Future<void> _processImage(InputImage inputImage) async {
     if (!_canProcess) return;
-    await Future.delayed(const Duration(seconds: 2));
-    if (_isBusy) return;
-    _isBusy = true;
-    setState(() {
-      _text = '';
-    });
-    final recognizedText = await _textRecognizer.processImage(inputImage);
-    final translatedText = await TranslationApi.translateRecognizedText(recognizedText);
-    final resultText = translatedText ?? recognizedText;
-    if (inputImage.metadata?.size != null && inputImage.metadata?.rotation != null) {
-      final painter = TextRecognizerPainter(
-        resultText,
-        inputImage.metadata!.size,
-        inputImage.metadata!.rotation,
-        _cameraLensDirection,
-      );
 
-      if (taking_picture) painter.captureAndSaveCanvas(inputImage.metadata!.size);
-      _customPaint = CustomPaint(painter: painter);
-    } else {
-      _text = 'Recognized text:\n\n${resultText.text}';
-      _customPaint = null;
-    }
-    _isBusy = false;
-    if (mounted) {
+    // Update image every 100 milliseconds
+    _imageUpdateTimer?.cancel();
+    _imageUpdateTimer = Timer.periodic(const Duration(milliseconds: 100), (_) {
       setState(() {});
-    }
+    });
+
+    if (_isProcessing) return;
+    _isProcessing = true;
+
+    // Run text recognition every 3 seconds
+    _textRecognitionTimer?.cancel();
+    _textRecognitionTimer = Timer.periodic(const Duration(seconds: 3), (timer) async {
+      if (!_canProcess) return;
+      setState(() {
+        _text = '';
+      });
+      final recognizedText = await _textRecognizer.processImage(inputImage);
+      final translatedText = await TranslationApi.translateRecognizedText(recognizedText);
+      final resultText = translatedText ?? recognizedText;
+      if (inputImage.metadata?.size != null && inputImage.metadata?.rotation != null) {
+        final painter = TextRecognizerPainter(
+          resultText,
+          inputImage.metadata!.size,
+          inputImage.metadata!.rotation,
+          _cameraLensDirection,
+        );
+
+        if (taking_picture) painter.captureAndSaveCanvas(inputImage.metadata!.size);
+        _customPaint = CustomPaint(painter: painter);
+      } else {
+        _text = 'Recognized text:\n\n${resultText.text}';
+        _customPaint = null;
+      }
+      if (mounted) {
+        setState(() {});
+      }
+    });
+    _isProcessing = false;
   }
 
   Future<void> _captureImage() async {
