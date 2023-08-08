@@ -8,6 +8,8 @@ import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart
 
 import 'coordinates_translator.dart';
 
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+
 class TextRecognizerPainter extends CustomPainter {
   TextRecognizerPainter(
     this.recognizedText,
@@ -20,6 +22,34 @@ class TextRecognizerPainter extends CustomPainter {
   final Size imageSize;
   final InputImageRotation rotation;
   final CameraLensDirection cameraLensDirection;
+
+  Future<void> captureAndSaveCanvas(Size size) async {
+    final recorder = ui.PictureRecorder();
+    final recorderCanvas = Canvas(
+      recorder,
+      Rect.fromPoints(Offset(0, 0), Offset(size.width, size.height)),
+    );
+
+    // Draw the content onto the recorderCanvas
+    paint(recorderCanvas, size);
+
+    final picture = recorder.endRecording();
+    final image = await picture.toImage(size.width.toInt(), size.height.toInt());
+
+    // Convert the image to a ByteData object
+    final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+    if (byteData == null) {
+      return; // Handle error
+    }
+
+    // Save the image to the gallery
+    final result = await ImageGallerySaver.saveImage(
+      byteData.buffer.asUint8List(),
+      quality: 100,
+    );
+
+    print('Image saved to gallery: $result');
+  }
 
   @override
   Future<void> paint(Canvas canvas, Size size) async {

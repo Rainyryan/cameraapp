@@ -23,6 +23,7 @@ class _TextRecognizerViewState extends State<TextRecognizerView> {
   var _cameraLensDirection = CameraLensDirection.back;
   late CameraController _cameraController;
 
+  bool taking_picture = false;
   @override
   void initState() {
     super.initState();
@@ -98,8 +99,8 @@ class _TextRecognizerViewState extends State<TextRecognizerView> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFFFFE4C7), // Creamy Orange color
                 ),
-                onPressed: () => TextToSpeechApi.speak("hello ryan"), //_captureImage,
-                child: Text('test tts'),
+                onPressed: () => taking_picture = true, //_captureImage,
+                child: Text('capture canvas'),
               ),
             ),
           ),
@@ -156,6 +157,8 @@ class _TextRecognizerViewState extends State<TextRecognizerView> {
         inputImage.metadata!.rotation,
         _cameraLensDirection,
       );
+
+      if (taking_picture) painter.captureAndSaveCanvas(inputImage.metadata!.size);
       _customPaint = CustomPaint(painter: painter);
     } else {
       _text = 'Recognized text:\n\n${resultText.text}';
