@@ -19,17 +19,20 @@ class _TextRecognizerViewState extends State<TextRecognizerView> {
   var _script = TextRecognitionScript.chinese;
   var _textRecognizer = TextRecognizer(script: TextRecognitionScript.chinese);
   bool _canProcess = true;
-  bool _isBusy = false;
   CustomPaint? _customPaint;
   String? _text;
   var _cameraLensDirection = CameraLensDirection.back;
   late CameraController _cameraController;
 
-  bool _isProcessing = false; // Track if text recognition process is ongoing
-  Timer? _imageUpdateTimer; // Timer for updating the image
-  Timer? _textRecognitionTimer; // Timer for running text recognition
+  bool translator_in_cd = false;
+  bool recognizer_in_cd = false;
+  bool image_update_in_cd = false;
 
   bool taking_picture = false;
+
+  static RecognizedText? recognizedText;
+  static RecognizedText? translatedText;
+
   @override
   void initState() {
     super.initState();
@@ -42,8 +45,6 @@ class _TextRecognizerViewState extends State<TextRecognizerView> {
     _textRecognizer.close();
     _cameraController.dispose();
 
-    _imageUpdateTimer?.cancel();
-    _textRecognitionTimer?.cancel();
     super.dispose();
   }
 
@@ -148,78 +149,56 @@ class _TextRecognizerViewState extends State<TextRecognizerView> {
         }).toList(),
       );
 
-  // Future<void> _processImage(InputImage inputImage) async {
-  //   if (!_canProcess) return;
-  //   await Future.delayed(const Duration(seconds: 2));
-  //   if (_isBusy) return;
-  //   _isBusy = true;
-  //   setState(() {
-  //     _text = '';
-  //   });
-  //   final recognizedText = await _textRecognizer.processImage(inputImage);
-  //   final translatedText = await TranslationApi.translateRecognizedText(recognizedText);
-  //   final resultText = translatedText ?? recognizedText;
-  //   if (inputImage.metadata?.size != null && inputImage.metadata?.rotation != null) {
-  //     final painter = TextRecognizerPainter(
-  //       resultText,
-  //       inputImage.metadata!.size,
-  //       inputImage.metadata!.rotation,
-  //       _cameraLensDirection,
-  //     );
-
-  //     if (taking_picture) painter.captureAndSaveCanvas(inputImage.metadata!.size);
-  //     _customPaint = CustomPaint(painter: painter);
-  //   } else {
-  //     _text = 'Recognized text:\n\n${resultText.text}';
-  //     _customPaint = null;
-  //   }
-  //   _isBusy = false;
-  //   if (mounted) {
-  //     setState(() {});
-  //   }
-  // }
-
   Future<void> _processImage(InputImage inputImage) async {
     if (!_canProcess) return;
-
-    // Update image every 100 milliseconds
-    _imageUpdateTimer?.cancel();
-    _imageUpdateTimer = Timer.periodic(const Duration(milliseconds: 100), (_) {
-      setState(() {});
+    await Future.delayed(const Duration(milliseconds: 100));
+    if (image_update_in_cd) return;
+    image_update_in_cd = true;
+    Timer(Duration(milliseconds: 50), () {
+      image_update_in_cd = false;
+    });
+    setState(() {
+      _text = '';
     });
 
-    if (_isProcessing) return;
-    _isProcessing = true;
-
-    // Run text recognition every 3 seconds
-    _textRecognitionTimer?.cancel();
-    _textRecognitionTimer = Timer.periodic(const Duration(seconds: 3), (timer) async {
-      if (!_canProcess) return;
-      setState(() {
-        _text = '';
+    if (!recognizer_in_cd) {
+      recognizer_in_cd = true;
+      Timer(Duration(milliseconds: 300), () {
+        recognizer_in_cd = false;
       });
-      final recognizedText = await _textRecognizer.processImage(inputImage);
-      final translatedText = await TranslationApi.translateRecognizedText(recognizedText);
-      final resultText = translatedText ?? recognizedText;
-      if (inputImage.metadata?.size != null && inputImage.metadata?.rotation != null) {
-        final painter = TextRecognizerPainter(
-          resultText,
-          inputImage.metadata!.size,
-          inputImage.metadata!.rotation,
-          _cameraLensDirection,
-        );
+      recognizedText = await _textRecognizer.processImage(inputImage);
+    }
 
-        if (taking_picture) painter.captureAndSaveCanvas(inputImage.metadata!.size);
-        _customPaint = CustomPaint(painter: painter);
-      } else {
-        _text = 'Recognized text:\n\n${resultText.text}';
-        _customPaint = null;
+    if (!translator_in_cd) {
+      translator_in_cd = true;
+      Timer(Duration(milliseconds: 1000), () {
+        translator_in_cd = false;
+      });
+      translatedText = await TranslationApi.translateRecognizedText(recognizedText!);
+    }
+
+    final resultText = translatedText ?? recognizedText!;
+    if (inputImage.metadata?.size != null && inputImage.metadata?.rotation != null) {
+      final painter = TextRecognizerPainter(
+        resultText,
+        inputImage.metadata!.size,
+        inputImage.metadata!.rotation,
+        _cameraLensDirection,
+      );
+
+      if (taking_picture) {
+        painter.captureAndSaveCanvas(inputImage.metadata!.size);
+        taking_picture = false;
       }
-      if (mounted) {
-        setState(() {});
-      }
-    });
-    _isProcessing = false;
+      _customPaint = CustomPaint(painter: painter);
+    } else {
+      _text = 'Recognized text:\n\n${resultText.text}';
+      _customPaint = null;
+    }
+
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Future<void> _captureImage() async {
